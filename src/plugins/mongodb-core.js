@@ -264,21 +264,41 @@ function wrapCallback (tracer, span, done) {
   }
 }
 
+
+var masterCount = 0
+
+if(process.env.DB_ADMIN_LOGS){
+  
+  setInterval(() => {
+
+      console.log('master count: ', masterCount)
+      masterCount = 0
+    }, 5000)  
+}
+
 function logAdminCommands(ns, cmd, operationName) {
 
   if (ns === 'admin.$cmd' && operationName === 'unknownCommand'){
 
+    if(cmd.ismaster && Object.keys(cmd).length === 1){
+      
+      masterCount += 1
+      return
+    }
+
     console.log('-------', ns, ': ', JSON.stringify(cmd, null, 2))
   }
 }
-
 
 function getResource (ns, cmd, operationName) {
   if (!operationName) {
     operationName = DATABASE_COMMANDS.find(name => cmd[name] !== undefined) || 'unknownCommand'
   }
 
-  logAdminCommands(ns, cmd, operationName)
+  if (process.env.DB_ADMIN_LOGS) {
+
+    logAdminCommands(ns, cmd, operationName)
+  }
 
   const parts = [operationName, ns]
 
