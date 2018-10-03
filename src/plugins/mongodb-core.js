@@ -271,7 +271,7 @@ if(process.env.DB_ADMIN_LOGS){
   
   setInterval(() => {
 
-      console.log('master count: ', masterCount)
+    console.log('DB_ADMIN_LOGS ------- master count: ', masterCount)
       masterCount = 0
     }, 5000)  
 }
@@ -286,7 +286,7 @@ function logAdminCommands(ns, cmd, operationName) {
       return
     }
 
-    console.log('-------', ns, ': ', JSON.stringify(cmd, null, 2))
+    console.log("DB_ADMIN_LOGS ------- ", ns, ": ", JSON.stringify(cmd, null, 2));
   }
 }
 
