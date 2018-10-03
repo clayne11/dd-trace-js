@@ -185,6 +185,7 @@ const DATABASE_COMMANDS = [
   'logApplicationMessage'
 ]
 
+
 function createWrapOperation (tracer, config, operationName) {
   return function wrapOperation (operation) {
     return function operationWithTrace (ns, ops, options, callback) {
@@ -263,10 +264,21 @@ function wrapCallback (tracer, span, done) {
   }
 }
 
+function logAdminCommands(ns, cmd, operationName) {
+
+  if (ns === 'admin.$cmd' && operationName === 'unknownCommand'){
+
+    console.log('-------', ns, ': ', JSON.stringify(cmd, null, 2))
+  }
+}
+
+
 function getResource (ns, cmd, operationName) {
   if (!operationName) {
     operationName = DATABASE_COMMANDS.find(name => cmd[name] !== undefined) || 'unknownCommand'
   }
+
+  logAdminCommands(ns, cmd, operationName)
 
   const parts = [operationName, ns]
 
